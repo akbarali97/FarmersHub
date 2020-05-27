@@ -1,0 +1,63 @@
+<!-- **********************************************************************************************************************************************************
+                                                MAIN CONTENT
+*********************************************************************************************************************************************************** -->
+
+<!--main content start-->
+
+<section id="main-content">
+    <section class="wrapper">
+      <h3><i class="fa fa-angle-right"></i>Contract Manager</h3>
+      <!-- BASIC FORM ELELEMNTS -->
+      
+      <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12" style="align-content: center;">
+        <div class="custom-box">
+          <form method="POST" action="/Contracts_Manager/Add_Contracts/">{% csrf_token %}
+          <div class="servicetitle">
+            <input list="product_name" name="product_name" class="form-control round-form" placeholder="Product Name" onchange="readURL(this,'pimg');">
+            <datalist id="product_name">
+              {% for i in p %}
+              <option value={{i.name}}>
+              {% endfor %}
+            </datalist>
+            <hr>
+          </div>
+          <!-- <div class="icn-main-container">
+             <img class="icn-container" src='/static/images/'>
+            <img id="pimg" src="/static/images/products/" class="img-circle">
+          </div> -->
+          <!-- <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry.</p> -->
+          <ul class="pricing">
+            <li><input type="number" class="form-control round-form" placeholder="Duration" name='duration'>
+              <select class="form-control round-form" name="duration_unit">
+                <option>Months</option>
+                <option>weeks</option>
+                <option>Days</option>
+              </select><span class="help-block">example: 3 months</span></li>
+            <li><input type="number" placeholder="Frequency" name='frequency' class="form-control round-form">
+              <select name="frequency_unit" class="form-control round-form">
+                <option>daily</option>
+                <option>weekly</option>
+                <option>monthly</option>
+              </select><span class="help-block">example: 1 times Weekly</span></li>
+              <li><input type="number" placeholder="Quantity" name='quantity' class="form-control round-form">
+                <select name="quantity_unit" class="form-control round-form">
+                  <option>kilogram</option>
+                  <option>gram</option>
+                  <option>pieces</option>
+                </select><span class="help-block">example: 4 kilogram</span></li>
+                <li><input type="number" placeholder="Price" name='price' class="form-control round-form">
+                  <select name="price_unit" class="form-control round-form">
+                    <option>Indian Rupees</option>
+                    <option>US Dollars</option>
+                    <option>UAE Dirhams</option>
+                  </select><span class="help-block">example: 350 Indian Rupees</span></li>
+          </ul>
+          <button class="btn btn-theme" type="submit" name='create' >Create</button>
+        </form>
+        </div>
+        <!-- end custombox -->
+      </div>
+      
+    </section>
+    <!-- /wrapper -->
+  </section>

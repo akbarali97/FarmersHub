@@ -3,7 +3,7 @@ from django.http import HttpResponseRedirect
 from django.template import loader
 from django.db import connection
 from django.contrib import messages
-from pfapp.models import Person, Fruits, User_locations, user_details
+from pfapp.models import Person, Fruits, User_locations, user_details, products,contracts
 from django.core.mail import EmailMessage
 from django.core.files.storage import FileSystemStorage
 from django.shortcuts import redirect, render
@@ -46,6 +46,7 @@ def index(request):
             # return render(request, 'dashboard_index.html', {'usr': checkuser(request), 'content_view': content_view,'user_exist':user_exist,'loged_user_type':loged_user_type})
         else:
             f = Fruits.objects.all()
+            # products.objects.create(name='onion')
             return render(request, 'index.html', {'usr': checkuser(request), 'Fruits': f, 'signup_page': signup_page})
         
 
@@ -59,7 +60,10 @@ def view_profile(request,email):
             c.cursor.row_factory = rfact
             q_usr = c.fetchone()
         user_exist = 1
-        return render(request, 'dashboard_index.html', {'usr': checkuser(request), 'content_view': content_view,'qusr':q_usr,'user_exist':user_exist,})
+        person = Person.objects.get(email=email)
+        person = person.id
+        c = contracts.objects.filter(Person__id=person)
+        return render(request, 'dashboard_index.html', {'usr': checkuser(request), 'content_view': content_view,'qusr':q_usr,'user_exist':user_exist,'c':c})
     else:
         messages.info(request, 'Login Now to view this page!!!')
         return redirect('/')
@@ -181,7 +185,11 @@ def Active_Contracts(request):
         viewPage = loader.get_template('dashboard_index.html')
         content_view = 'Contracts_Manager'
         content_view_sub = 'Active_Contracts'
-        return HttpResponse(viewPage.render({'usr': checkuser(request), 'content_view': content_view,'content_view_sub': content_view_sub,}, request))
+        person = request.session['usr']
+        person = person.get('id')
+        c = contracts.objects.filter(Person__id=person)
+        print (c)
+        return HttpResponse(viewPage.render({'usr': checkuser(request), 'content_view': content_view,'content_view_sub': content_view_sub,'c':c}, request))
     else:
         messages.info(request, 'Login Now to view this page!')
         return redirect('/')
@@ -198,10 +206,43 @@ def Expired_Contracts(request):
 
 def Add_Contracts(request):
     if checkuser(request):
-        viewPage = loader.get_template('dashboard_index.html')
-        content_view = 'Contracts_Manager'
-        content_view_sub = 'Add_Contracts'
-        return HttpResponse(viewPage.render({'usr': checkuser(request), 'content_view': content_view,'content_view_sub': content_view_sub,}, request))
+        # viewPage = loader.get_template('dashboard_index.html')
+        # content_view = 'Contracts_Manager'
+        # content_view_sub = 'Add_Contracts'
+        # p = products.objects.all()
+        if 'create' in request.POST:
+            person = request.session['usr']
+            person = person.get('id')
+            product = request.POST['product_name']
+            product = products.objects.get(name=product)
+            product = product.id
+            duration = request.POST['duration']
+            frequency = request.POST['frequency']
+            quantity = request.POST['quantity']
+            price = request.POST['price']
+            duration_unit = request.POST['duration_unit']
+            frequency_unit = request.POST['frequency_unit']
+            quantity_unit = request.POST['quantity_unit']
+            price_unit = request.POST['price_unit']
+            status = 'availabe'
+            # try:
+            # c=contracts.objects.create(product=product,quantity=qty,quantity_unit=qty_unit,duration=duration,duration_unit=duration_unit,frequency=frequency,frequency_unit=frequency_unit,price=price,price_unit=price_unit,Person=person)
+            # c.save()
+            # return redirect('/Contracts_Manager/Active_Contracts/')
+            # except Exception:
+            #     print('unable to create product')
+            #     return redirect('/Contracts_Manager/Add_Contracts/')
+            # try 2
+            with connection.cursor() as c:
+                c.execute("INSERT INTO pfapp_contracts (Person_id,product_id,quantity,quantity_unit,duration,duration_unit,frequency,frequency_unit,price,price_unit,status) VALUES(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)", [person,product,quantity,quantity_unit,duration,duration_unit,frequency,frequency_unit,price,price_unit,status])
+            messages.info(request, 'Contract successfully created')
+            return redirect('/Contracts_Manager/Active_Contracts/')
+        else:
+            content_view = 'Contracts_Manager'
+            content_view_sub = 'Add_Contracts'
+            p = products.objects.all()
+            return render(request, 'dashboard_index.html', {'usr': checkuser(request), 'content_view': content_view,'content_view_sub': content_view_sub,'p':p})
+            # return HttpResponse(viewPage.render({'usr': checkuser(request), 'content_view': content_view,'content_view_sub': content_view_sub,'p':p}, request))
     else:
         messages.info(request, 'Login Now to view this page!')
         return redirect('/')
@@ -224,7 +265,6 @@ def My_Contracts(request):
     else:
         messages.info(request, 'Login Now to view this page!')
         return redirect('/')
-
 
 
 

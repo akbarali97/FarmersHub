@@ -34,10 +34,10 @@ class Fruits(models.Model):
         return self.name
 
 class products(models.Model):
-    name = models.CharField(max_length=30)
+    name = models.CharField(max_length=30,unique=True)
 
 class contracts(models.Model):
-    product = models.ManyToManyField(products)
+    product = models.ForeignKey('products', on_delete=models.CASCADE)
     quantity = models.IntegerField()
     quantity_unit = models.CharField(max_length=15)
     duration = models.IntegerField()
