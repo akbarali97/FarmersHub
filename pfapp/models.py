@@ -49,3 +49,8 @@ class contracts(models.Model):
     Person = models.ForeignKey('Person', on_delete=models.CASCADE)
     status = models.CharField(max_length=10,default='available')
 
+class reviews(models.Model):
+    farmer = models.ForeignKey('Person', on_delete=models.CASCADE)
+    consumer = models.ForeignKey('Person', on_delete=models.CASCADE)
+    review = models.TextField()
+    rating = models.FloatField()
