@@ -1,5 +1,4 @@
 .idea/
 pf/__pycache__/
-pfapp/__pycache__/*
+pfapp/__pycache__/
 pfapp/migrations/
-pfapp/__pycache__/models.cpython-38.pyc

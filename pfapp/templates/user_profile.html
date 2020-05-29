@@ -83,10 +83,10 @@
                       <ul class="pricing">
                         <li>{{i.duration}}&nbsp{{i.duration_unit}}</li>
                         <li>{{i.frequency}}&nbsp{{i.frequency_unit}}</li>
-                        <li>{{i.price}}&nbsp{{i.price_unit}}</li>
+                        <li>{{i.quantity}}&nbsp{{i.quantity_unit}}</li>
                         <li>₹{{i.price}}/-&nbsp{{i.price_unit}}</li>
                       </ul>
-                      <button type="button" name='Buy' class="btn btn-danger" href='#'>Buy Now</button>
+                      <button type="button" name='Buy' class="btn btn-danger" href='/<email>/buy/'>Buy Now</button>
                     </div>
                     <!-- end custombox -->
                   </div>
@@ -105,27 +105,30 @@
 
                     <!-- for viewing reviews -->
                     <div class="row" style="border-radius: 25px;border: blue;">
-                      <div><span style="float: left;">photo :</span><span style="float: right;">review text</span></div>
+                      <div><span style="float: left;">reviewer photo here </span><span style="float: right;">review text here</span></div>
                       <hr>
                     </div>
                     <!-- /for viewing reviews -->
                     
                   <!-- for inserting review -->
-                  <form action="/review/" method="POST">{% csrf_token %}
+                  <form method="POST">{% csrf_token %}
                   <textarea name='reviewtext' rows="3" class="form-control" placeholder="write a review about the farmer."></textarea>
                   <div class="grey-style">
                     <div class="pull-left">
-                      <div class="stars">
-                          <input class="star star-5" id="star-5" type="radio" name="star"/>
-                          <label class="star star-5" for="star-5"></label>
-                          <input class="star star-4" id="star-4" type="radio" name="star"/>
-                          <label class="star star-4" for="star-4"></label>
-                          <input class="star star-3" id="star-3" type="radio" name="star"/>
-                          <label class="star star-3" for="star-3"></label>
-                          <input class="star star-2" id="star-2" type="radio" name="star"/>
-                          <label class="star star-2" for="star-2"></label>
-                          <input class="star star-1" id="star-1" type="radio" name="star"/>
-                          <label class="star star-1" for="star-1"></label>
+                      <div class="txt-center">
+                            <div class="rating">
+                                <input id="star5" name="star" type="radio" value="5" class="radio-btn hide" />
+                                <label for="star5" >☆</label>
+                                <input id="star4" name="star" type="radio" value="4" class="radio-btn hide" />
+                                <label for="star4" >☆</label>
+                                <input id="star3" name="star" type="radio" value="3" class="radio-btn hide" />
+                                <label for="star3" >☆</label>
+                                <input id="star2" name="star" type="radio" value="2" class="radio-btn hide" />
+                                <label for="star2" >☆</label>
+                                <input id="star1" name="star" type="radio" value="1" class="radio-btn hide" />
+                                <label for="star1" >☆</label>
+                                <div class="clear"></div>
+                            </div>
                       </div>
                     </div>
                     <div class="pull-right">

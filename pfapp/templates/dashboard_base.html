@@ -31,39 +31,52 @@
 {% endfor %} {% endif %}
 
 <style>
-  div.stars {
-  width: 270px;
-  display: inline-block;
+  
+  .txt-center {
+  text-align: center;
+}
+.hide {
+  display: none;
 }
 
-input.star { display: none; }
-
-label.star {
-  float: right;
-  padding: 10px;
-  font-size: 36px;
-  color: #444;
-  transition: all .2s;
+.clear {
+  float: none;
+  clear: both;
 }
 
-input.star:checked ~ label.star:before {
-  content: '\f005';
-  color: #FD4;
-  transition: all .25s;
+.rating {
+    width: 90px;
+    unicode-bidi: bidi-override;
+    direction: rtl;
+    text-align: center;
+    position: relative;
 }
 
-input.star-5:checked ~ label.star:before {
-  color: #FE7;
-  text-shadow: 0 0 20px #952;
+.rating > label {
+    float: right;
+    display: inline;
+    padding: 0;
+    margin: 0;
+    position: relative;
+    width: 1.1em;
+    cursor: pointer;
+    color: #000;
 }
 
-input.star-1:checked ~ label.star:before { color: #F62; }
+.rating > label:hover,
+.rating > label:hover ~ label,
+.rating > input.radio-btn:checked ~ label {
+    color: transparent;
+}
 
-label.star:hover { transform: rotate(-15deg) scale(1.3); }
-
-label.star:before {
-  content: '\f006';
-  font-family: FontAwesome;
+.rating > label:hover:before,
+.rating > label:hover ~ label:before,
+.rating > input.radio-btn:checked ~ label:before,
+.rating > input.radio-btn:checked ~ label:before {
+    content: "\2605";
+    position: absolute;
+    left: 0;
+    color: #FFD700;
 }
 
 

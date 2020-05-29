@@ -25,13 +25,13 @@ class User_locations(models.Model):
     locality = models.CharField(max_length=30)
     person = models.ForeignKey('Person', on_delete=models.CASCADE)
 
-class Fruits(models.Model):
-    name = models.CharField(max_length=30)
-    price = models.CharField(max_length=30)
-    image = models.FileField(upload_to='static/images')
+# class Fruits(models.Model):
+#     name = models.CharField(max_length=30)
+#     price = models.CharField(max_length=30)
+#     image = models.FileField(upload_to='static/images')
 
-    def __str__(self):
-        return self.name
+#     def __str__(self):
+#         return self.name
 
 class products(models.Model):
     name = models.CharField(max_length=30,unique=True)

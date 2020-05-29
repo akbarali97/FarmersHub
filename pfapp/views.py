@@ -3,7 +3,7 @@ from django.http import HttpResponseRedirect
 from django.template import loader
 from django.db import connection
 from django.contrib import messages
-from pfapp.models import Person, Fruits, User_locations, user_details, products,contracts
+from pfapp.models import Person, User_locations, user_details, products,contracts
 from django.core.mail import EmailMessage
 from django.core.files.storage import FileSystemStorage
 from django.shortcuts import redirect, render
@@ -45,9 +45,9 @@ def index(request):
                 return redirect('Profile/')
             # return render(request, 'dashboard_index.html', {'usr': checkuser(request), 'content_view': content_view,'user_exist':user_exist,'loged_user_type':loged_user_type})
         else:
-            f = Fruits.objects.all()
+            # f = Fruits.objects.all()
             # products.objects.create(name='onion')
-            return render(request, 'index.html', {'usr': checkuser(request), 'Fruits': f, 'signup_page': signup_page})
+            return render(request, 'index.html', {'usr': checkuser(request), 'signup_page': signup_page})
         
 
 def view_profile(request,email):
@@ -67,6 +67,9 @@ def view_profile(request,email):
     else:
         messages.info(request, 'Login Now to view this page!!!')
         return redirect('/')
+
+def buy(request):
+    return True
 
 def Explore(request):
     if checkuser(request):
