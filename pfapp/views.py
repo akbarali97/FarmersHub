@@ -53,16 +53,16 @@ def index(request):
 def view_profile(request,email):
     if checkuser(request):
         user_exist = 0
-        remail = email
+        # remail = email
         content_view = 'Explore_Farmers'
         with connection.cursor() as c:
-            c.execute(f"SELECT * FROM pfapp_person JOIN pfapp_user_locations ON pfapp_user_locations.person_id = pfapp_person.id JOIN pfapp_user_details ON pfapp_user_details.person_id = pfapp_person.id WHERE pfapp_person.email='{remail}' LIMIT 1")
+            c.execute("SELECT * FROM pfapp_person JOIN pfapp_user_locations ON pfapp_user_locations.person_id = pfapp_person.id JOIN pfapp_user_details ON pfapp_user_details.person_id = pfapp_person.id WHERE pfapp_person.email=%s LIMIT 1", [email])
             c.cursor.row_factory = rfact
             q_usr = c.fetchone()
         user_exist = 1
-        person = Person.objects.get(email=email)
-        person = person.id
-        c = contracts.objects.filter(Person__id=person)
+        p = Person.objects.get(email=email)
+        p = p.id
+        c = contracts.objects.filter(Person__id=p)
         return render(request, 'dashboard_index.html', {'usr': checkuser(request), 'content_view': content_view,'qusr':q_usr,'user_exist':user_exist,'c':c})
     else:
         messages.info(request, 'Login Now to view this page!!!')

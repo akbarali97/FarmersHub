@@ -50,7 +50,7 @@ class contracts(models.Model):
     status = models.CharField(max_length=10,default='available')
 
 class reviews(models.Model):
-    farmer = models.ForeignKey('Person', on_delete=models.CASCADE)
-    consumer = models.ForeignKey('Person', on_delete=models.CASCADE)
-    review = models.TextField()
-    rating = models.FloatField()
+    reviewee = models.ForeignKey('Person', on_delete=models.CASCADE)
+    reviewer = models.ForeignKey('Person', on_delete=models.CASCADE, related_name='reviewee')
+    review = models.TextField(null=True)
+    rating = models.FloatField(null=True)

@@ -83,7 +83,7 @@
                       <ul class="pricing">
                         <li>{{i.duration}}&nbsp{{i.duration_unit}}</li>
                         <li>{{i.frequency}}&nbsp{{i.frequency_unit}}</li>
-                        <li>{{i.frequency}}&nbsp{{i.frequency_unit}}</li>
+                        <li>{{i.price}}&nbsp{{i.price_unit}}</li>
                         <li>₹{{i.price}}/-&nbsp{{i.price_unit}}</li>
                       </ul>
                       <button type="button" name='Buy' class="btn btn-danger" href='#'>Buy Now</button>
@@ -102,6 +102,14 @@
               <div id="Reviews" class="tab-pane">
                 <div class="row">
                   <div class="col-lg-8 col-lg-offset-2 detailed">
+
+                    <!-- for viewing reviews -->
+                    <div class="row" style="border-radius: 25px;border: blue;">
+                      <div><span style="float: left;">photo :</span><span style="float: right;">review text</span></div>
+                      <hr>
+                    </div>
+                    <!-- /for viewing reviews -->
+                    
                   <!-- for inserting review -->
                   <form action="/review/" method="POST">{% csrf_token %}
                   <textarea name='reviewtext' rows="3" class="form-control" placeholder="write a review about the farmer."></textarea>
