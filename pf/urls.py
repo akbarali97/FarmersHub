@@ -41,7 +41,7 @@ urlpatterns = [
     path('Dispatch_Manager/',views.Dispatch_Manager),
     path('user/<email>/',views.view_profile, name='view_profile'),
     path('checkout/Product=<int:contract_id>/', views.checkout),
-    path('cart/',views.cart)
+    path('cart/', views.cart),
 
 ]
 

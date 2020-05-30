@@ -111,6 +111,7 @@ def Settings(request):
         messages.info(request, 'Login Now to view this page!!')
         return redirect('/')
 
+
 def Delivery_Conformation(request):
     if checkuser(request):
         viewPage = loader.get_template('dashboard_index.html')
