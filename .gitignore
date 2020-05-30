@@ -2,3 +2,7 @@
 pf/__pycache__/
 pfapp/__pycache__/
 pfapp/migrations/
+pf/__pycache__/urls.cpython-38.pyc
+pf/__pycache__/urls.cpython-38.pyc
+pfapp/__pycache__/models.cpython-38.pyc
+pfapp/__pycache__/views.cpython-38.pyc

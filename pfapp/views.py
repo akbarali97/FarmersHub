@@ -53,7 +53,6 @@ def index(request):
 def view_profile(request,email):
     if checkuser(request):
         user_exist = 0
-        # remail = email
         content_view = 'Explore_Farmers'
         with connection.cursor() as c:
             c.execute("SELECT * FROM pfapp_person JOIN pfapp_user_locations ON pfapp_user_locations.person_id = pfapp_person.id JOIN pfapp_user_details ON pfapp_user_details.person_id = pfapp_person.id WHERE pfapp_person.email=%s LIMIT 1", [email])
@@ -68,8 +67,24 @@ def view_profile(request,email):
         messages.info(request, 'Login Now to view this page!!!')
         return redirect('/')
 
-def buy(request):
-    return True
+def checkout(request):
+    if checkuser(request):
+        content_view = 'checkout'
+        q_contract = contracts.objects.get(id=contract_id)
+        context = {'usr': checkuser(request), 'content_view': content_view,'q_contract':q_contract,}
+        return render(request, 'dashboard_index.html' ,context)
+    else:
+        messages.info(request, 'Login Now to view this page!!!')
+        return redirect('/')
+
+def cart(request):
+    if checkuser(request):
+        content_view = 'cart'
+        context = {'content_view':content_view,}
+        return render(request, 'dashboard_index.html' ,context)
+    else:
+        messages.info(request, 'Login Now to view this page!!')
+        return redirect('/')
 
 def Explore(request):
     if checkuser(request):

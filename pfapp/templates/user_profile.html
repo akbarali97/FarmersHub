@@ -86,8 +86,11 @@
                         <li>{{i.quantity}}&nbsp{{i.quantity_unit}}</li>
                         <li>₹{{i.price}}/-&nbsp{{i.price_unit}}</li>
                       </ul>
-                      <button type="button" name='Buy' class="btn btn-danger" href='/<email>/buy/'>Buy Now</button>
-                    </div>
+                      <p>
+                        <a  class="btn btn-danger" href='/checkout/Product={{i.id}}/'>Buy Now</a>
+                        <a  class="btn btn-danger" href='/cart/'>Add to Cart</a>
+                      </p>
+                      </div>
                     <!-- end custombox -->
                   </div>
                   <!-- end col-4 -->
