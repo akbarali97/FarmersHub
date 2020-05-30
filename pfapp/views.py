@@ -28,10 +28,6 @@ def checkuser(request):
         user_l = request.session['usr']
     return user_l
 
-# def pagenotfound(request):
-#     page = loader.get_template("404.html")
-#     return HttpResponse(page.render({}, request))
-
 
 def index(request):
         signup_page = ''
@@ -43,13 +39,10 @@ def index(request):
                 return redirect('Explore/')
             else:
                 return redirect('Profile/')
-            # return render(request, 'dashboard_index.html', {'usr': checkuser(request), 'content_view': content_view,'user_exist':user_exist,'loged_user_type':loged_user_type})
         else:
-            # f = Fruits.objects.all()
-            # products.objects.create(name='onion')
             return render(request, 'index.html', {'usr': checkuser(request), 'signup_page': signup_page})
         
-
+# to view the farmers profile page
 def view_profile(request,email):
     if checkuser(request):
         user_exist = 0
@@ -67,6 +60,7 @@ def view_profile(request,email):
         messages.info(request, 'Login Now to view this page!!!')
         return redirect('/')
 
+# when buy button clicked from contracts tab on farmer's profile page.
 def checkout(request):
     if checkuser(request):
         content_view = 'checkout'
@@ -77,6 +71,7 @@ def checkout(request):
         messages.info(request, 'Login Now to view this page!!!')
         return redirect('/')
 
+# when 'Add to Cart' button clicked from contracts tab on farmer's profile page.
 def cart(request):
     if checkuser(request):
         content_view = 'cart'
@@ -86,15 +81,15 @@ def cart(request):
         messages.info(request, 'Login Now to view this page!!')
         return redirect('/')
 
+# To view farmers near the registered location of the consumer
 def Explore(request):
     if checkuser(request):
         viewPage = loader.get_template('dashboard_index.html')
         user_exist = 0
         content_view = 'Explore_Farmers'
-        usertype = 'farmer'
-        location = 'thrissur'
+        location = request.session['usr'].get('locality')
         with connection.cursor() as c:
-            c.execute(f"SELECT * FROM pfapp_person JOIN pfapp_user_locations ON pfapp_user_locations.person_id = pfapp_person.id JOIN pfapp_user_details ON pfapp_user_details.person_id = pfapp_person.id WHERE pfapp_person.type='{usertype}' AND pfapp_user_locations.locality='{location}' ")
+            c.execute(f"SELECT * FROM pfapp_person JOIN pfapp_user_locations ON pfapp_user_locations.person_id = pfapp_person.id JOIN pfapp_user_details ON pfapp_user_details.person_id = pfapp_person.id WHERE pfapp_person.type='farmer' AND pfapp_user_locations.locality='{location}' ")
             farmer = dictfetchall(c)
         return HttpResponse(viewPage.render({'usr': checkuser(request), 'content_view': content_view,'farmers':farmer,'user_exist':user_exist}, request))
     else:
