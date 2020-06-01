@@ -1,8 +1,38 @@
+<script src="/static/js/cart.js"></script>
+
+<!-- <script async>
+
+  function del(){
+    var item = document.getElementById('removebutton')
+    console.log(item.parentElement.parentElement.textContent)
+    item.parentElement.parentElement.remove()
+  }
+
+  function addtocartclicked(event) {
+    var button = event.target;
+    // var button = document.getElementById('addtocartbutton')
+    var shopItem = button.parentElement.parentElement;
+    console.log(shopItem);
+    var dict = {};
+    var name = shopItem.getElementById('productname');
+    console.log(name);
+    var duration = shopItem.getElementById('duration')[0].innerText
+    var frequency = shopItem.getElementById('frequency')[0].innerText
+    var quantity = shopItem.getElementById('quantity')[0].innerText
+    var price = shopItem.getElementById('price')[0].innerText
+    console.log(button,shopItem,name,duration,frequency,quantity,price)
+    // addItemToCart(title, price, imageSrc)
+    // updateCartTotal()
+}
+
+</script> -->
+
+
 <section id="main-content">
   <section class="wrapper site-min-height">
-    <div class="row mt">
+    <div class="row">
 
-      <div class="col-lg-12">
+      <!-- <div class="col-lg-12">
         <div class="row content-panel" style="background-image: url('/static/images/coverimg/{{qusr.id}}.jpg');background-attachment: fixed;background-repeat: no-repeat; background-position: center; background-size: cover" >
           <div class="col-md-4 profile-text mt mb centered">
             <div class="profile-pic">
@@ -11,7 +41,7 @@
             </div>
           </div>
         </div>
-      </div>
+      </div> -->
 
       <div class="col-lg-12 mt">
         <div class="row content-panel">
@@ -67,28 +97,54 @@
 
               <!-- Active_Contracts -->
               <div id="Active_Contracts" class="tab-pane">
-                <div class="row">
 
+                
+                <div class="activity-panel">
+                    <div class="row">
+                      <div class="col-sm-3" ></div>
+                      <div class="col-sm-6"><h5 >Make a Kit</h5></div>
+                      <div class="col-sm-3"><button class="btn btn-success disabled" style="float: right;">Buy Now</button></div>
+                    </div>
+                    <div style="background: #FFFFFF;border: 1px solid #DCDBD7;">
+                    <!-- <div class="row">
+                      <div class="col-sm-3" ><h6><u>Item</u></h6></div>
+                      <div class="col-sm-6" ><h6><u>Discription</u></h6></div>
+                      <div class="col-sm-3" ></div>
+                    </div> -->
+                    <div class="row" style="padding: 5px;">
+                      <div class="col-sm-3">onion</div>
+                      <div class="col-sm-6"><h6>details of onion</h6></div>
+                      <div class="col-sm-3">
+                        <button type="button" class="btn btn-danger" style="float: right;" id="removebutton" >Remove</button>
+                      </div>
+                    </div>
+                    <div class="row" style="padding: 5px;">
+                    <div class="col-sm-9"></div>
+                    <div class="col-sm-3"><h6>total</h6></div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="row">
                   <!-- for loopA will be used here to view number of contracts offered by user -->
                   {% for i in c %}
                   <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
-                    <div class="custom-box">
+                    <div class="custom-box" id="product_div">
                       <div class="servicetitle">
-                        <h4>{{i.product.name}}</h4>
+                        <h4 id="productname">{{i.product.name}}</h4>
                         <hr>
                       </div>
                       <div class="icn-main-container">
-                        <img class=" img-responsive" src='/static/images/products/{{i.product.id}}.jpeg' style="width: 220px; height: 120px; object-fit: cover; margin: auto;">
+                        <img id="productimg" class=" img-responsive" src='/static/images/products/{{i.product.id}}.jpeg' style="width: 220px; height: 120px; object-fit: cover; margin: auto;">
                       </div>
                       <ul class="pricing">
-                        <li>{{i.duration}}&nbsp{{i.duration_unit}}</li>
-                        <li>{{i.frequency}}&nbsp{{i.frequency_unit}}</li>
-                        <li>{{i.quantity}}&nbsp{{i.quantity_unit}}</li>
-                        <li>₹{{i.price}}/-&nbsp{{i.price_unit}}</li>
+                        <li id="duration">{{i.duration}}&nbsp{{i.duration_unit}}</li>
+                        <li id="frequency">{{i.frequency}}&nbsp{{i.frequency_unit}}</li>
+                        <li id="quantity">{{i.quantity}}&nbsp{{i.quantity_unit}}</li>
+                        <li id="price">₹{{i.price}}/-&nbsp{{i.price_unit}}</li>
                       </ul>
                       <p>
-                        <a  class="btn btn-danger" href='/checkout/Product={{i.id}}/'>Buy Now</a>
-                        <a  class="btn btn-danger" href='/cart/'>Add to Cart</a>
+                        <button  class="btn btn-danger" id="addtocartbutton" >Add to Cart</button>
                       </p>
                       </div>
                     <!-- end custombox -->

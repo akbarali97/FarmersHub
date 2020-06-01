@@ -61,7 +61,7 @@ def view_profile(request,email):
         return redirect('/')
 
 # when buy button clicked from contracts tab on farmer's profile page.
-def checkout(request):
+def checkout(request,contract_id):
     if checkuser(request):
         content_view = 'checkout'
         q_contract = contracts.objects.get(id=contract_id)
