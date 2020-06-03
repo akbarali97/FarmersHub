@@ -46,3 +46,7 @@ class reviews(models.Model):
     reviewer = models.ForeignKey('Person', on_delete=models.CASCADE, related_name='reviewee')
     review = models.TextField(null=True)
     rating = models.FloatField(null=True)
+
+class contracts_request(models.Model):
+    farmer = models.ForeignKey('Person', on_delete=models.CASCADE)
+    consumer = models.ForeignKey('Person', on_delete=models.CASCADE, related_name='consumer')

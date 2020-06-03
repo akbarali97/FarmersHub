@@ -39,9 +39,9 @@ urlpatterns = [
     path('Contracts_Manager/Add_Contracts/',views.Add_Contracts),
     path('Customer_Reviews/',views.Customer_Reviews),
     path('Dispatch_Manager/',views.Dispatch_Manager),
-    path('user/<email>/',views.view_profile, name='view_profile'),
-    path('checkout/Product=<int:contract_id>/', views.checkout),
-    path('cart/', views.cart),
+    path('user/<email>/',views.view_profile),
+    path('checkout/', views.checkout),
+    path('orders/', views.orders),
 
 ]
 

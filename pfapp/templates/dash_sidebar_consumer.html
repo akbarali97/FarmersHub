@@ -5,7 +5,6 @@
           <h5 class="centered">{{usr.name}}</h5>
           <h5 class="centered">{{usr.type}}</h5>
           <h5 class="centered">{{usr.locality}}</h5>
-
           <li class="sub-menu">
             <a {% if content_view == 'Explore_Farmers' %} class="active" {% endif %} href="/Explore/">
               <i class="fa fa-desktop"></i>
@@ -48,6 +47,14 @@
               <span>Learn Farming</span>
               </a>
           </li>
+
+          <li class="sub-menu">
+            <a {% if content_view == 'orders' %} class="active" {% endif %} href="/orders/">
+              <i class="fa fa-tasks"></i>
+              <span>orders</span>
+              </a>
+          </li>
+
 
           <li class="sub-menu">
             <a {% if content_view == 'Delivery_Conformation' %} class="active" {% endif %}  href="/Delivery_Conformation/">

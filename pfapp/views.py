@@ -61,25 +61,40 @@ def view_profile(request,email):
         return redirect('/')
 
 # when buy button clicked from contracts tab on farmer's profile page.
-def checkout(request,contract_id):
-    if checkuser(request):
-        content_view = 'checkout'
-        q_contract = contracts.objects.get(id=contract_id)
-        context = {'usr': checkuser(request), 'content_view': content_view,'q_contract':q_contract,}
-        return render(request, 'dashboard_index.html' ,context)
-    else:
-        messages.info(request, 'Login Now to view this page!!!')
-        return redirect('/')
+def checkout(request):
+    if request.is_ajax and request.method == "POST":
+        data = json.loads(request.POST.get('data'))
+        consumer_id = data.get('userid')
+        contract_ids = data.get('listofids')
+        print(data)
+        print(consumer_id)
+        print(contract_ids)
+        print(json.dumps(contract_ids))
+
+        sendrequesttofarmer(consumer_id,contract_ids)
+        # viewPage = loader.get_template('dashboard_index.html')
+        # content_view = 'orders'
+        # return HttpResponse(viewPage.render({'usr': checkuser(request), 'content_view': content_view}, request))
+        # return HttpResponse('success')
+
+        messages.info(request, 'success')
+        content_view = 'orders'
+        return render(request, 'dashboard_index.html' ,{'usr': checkuser(request),'content_view':content_view})
+
+def sendrequesttofarmer(consumer_id,contract_ids):
+    # first we have to update the contract_request table and add values to farmerid,consumer_id,contract_ids,
+    # request date, 
+    a = consumer_id
+
 
 # when 'Add to Cart' button clicked from contracts tab on farmer's profile page.
-def cart(request):
+def orders(request):
     if checkuser(request):
-        content_view = 'cart'
-        context = {'content_view':content_view,}
-        return render(request, 'dashboard_index.html' ,context)
+        content_view = 'orders'
+        return render(request, 'dashboard_index.html' ,{'usr': checkuser(request),'content_view':content_view})
     else:
         messages.info(request, 'Login Now to view this page!!')
-        return redirect('/')
+        return redirect('/Settings/')
 
 # To view farmers near the registered location of the consumer
 def Explore(request):
@@ -309,9 +324,13 @@ def login(request):
             return HttpResponseRedirect('/', request)
 
 def logout(request):
-    if request.session.has_key('usr'):
-        del request.session['usr']
-    return HttpResponseRedirect('/', request)
+    if checkuser(request):
+        if request.session.has_key('usr'):
+            del request.session['usr']
+        return HttpResponseRedirect('/', request)
+    else:
+        messages.info(request, 'Login now to perform this action!')
+        return HttpResponseRedirect('/', request)
 
 def signup(request):
     d = loader.get_template("signup.html")

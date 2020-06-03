@@ -157,3 +157,5 @@ EMAIL_PORT = 587
 
 # Configure Django App for Heroku.
 # django_heroku.settings(locals())
+
+CSRF_COOKIE_NAME = 'csrftoken'
