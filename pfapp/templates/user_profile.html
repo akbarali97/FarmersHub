@@ -53,6 +53,7 @@
                           <div class="profile-pic">
                             <p><img src="/static/usrimg/{{qusr.id}}.png" class="img-circle"></p>
                             <h2>{{qusr.name}}</h2>
+                            <h2 class='fm_cs' style="display: none;">{{qusr.id}}</h2>
                           </div>
 
                       </div>
@@ -86,7 +87,7 @@
                       <div class="col-sm-6"><h5 >Make a Kit</h5></div>
                       <div class="col-sm-3">
                         <!-- <form method="POST" id="csrf_var"> -->
-                          <button class="btn btn-success" id="btn-purchase" style="float: right;">Buy Now</button>{% csrf_token %}
+                          <button class="btn btn-success" type="button" id="btn-purchase" style="float: right;">Buy Now</button>{% csrf_token %}
                         <!-- </form> -->
                       </div>
                     </div>

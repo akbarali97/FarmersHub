@@ -27,7 +27,8 @@ function purchaseClicked() {
     var cartItems = document.getElementsByClassName('cart_items')[0]
     var cartItemids = cartItems.getElementsByClassName('proid')
     var listofids = []
-    var userid = parseFloat(document.getElementsByClassName('as_bf')[0].innerText)
+    var consumerid = parseFloat(document.getElementsByClassName('as_bf')[0].innerText)
+    var farmerid = parseFloat(document.getElementsByClassName('fm_cs')[0].innerText)
     var el = document.getElementsByName("csrfmiddlewaretoken")
     var csrf_value = el[0].getAttribute("value")
     // var dict = {cid:userid, list:listofids[],'CSRFToken': csrf_value}
@@ -37,7 +38,7 @@ function purchaseClicked() {
         var proid = parseFloat(cartItemids[i].innerText)
         listofids[i]=proid
     }
-    var data = {'userid':userid,'listofids':listofids}
+    var data = {'consumerid':consumerid,'farmerid':farmerid,'listofids':listofids}
     console.log(data)
     var data1 = JSON.stringify(data)
     console.log(data1)
@@ -47,6 +48,15 @@ function purchaseClicked() {
             type: 'POST',
             data: {'data':data1},
             headers:{"X-CSRFToken": csrf_value },
+            success:function(response){
+                alert('Your purchase order is submitted.\n ');
+                window.location.href = '/orders/';
+            },
+            error:function(){
+                alert('Please try again later.\n ');
+                location.reload();
+            },
+            
         });
     
 }

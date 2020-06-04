@@ -3,13 +3,13 @@ from django.http import HttpResponseRedirect
 from django.template import loader
 from django.db import connection
 from django.contrib import messages
-from pfapp.models import Person, User_locations, user_details, products,contracts
+from pfapp.models import Person, User_locations, user_details, products, contracts, contracts_kit
 from django.core.mail import EmailMessage
 from django.core.files.storage import FileSystemStorage
 from django.shortcuts import redirect, render
 import uuid
 import json
-from datetime import date
+import datetime
 
 def rfact (cr,r):
     return {i[1][0]: r[i[0]] for i in enumerate(cr.description)}
@@ -40,6 +40,7 @@ def index(request):
             else:
                 return redirect('Profile/')
         else:
+            # create_kit(2,3,'[5,4,3,2]','1860')
             return render(request, 'index.html', {'usr': checkuser(request), 'signup_page': signup_page})
         
 # to view the farmers profile page
@@ -64,37 +65,55 @@ def view_profile(request,email):
 def checkout(request):
     if request.is_ajax and request.method == "POST":
         data = json.loads(request.POST.get('data'))
-        consumer_id = data.get('userid')
+        consumer_id = data.get('consumerid')
+        farmer_id = data.get('farmerid')
         contract_ids = data.get('listofids')
-        print(data)
-        print(consumer_id)
-        print(contract_ids)
-        print(json.dumps(contract_ids))
+        contract_ids_str = str(contract_ids)
+        total = 0
+        for i in contract_ids:
+            total = contracts.objects.values_list('price', flat=True).get(id=i) + total
+        total = str(total)
+        # created = create_kit(consumer_id,farmer_id,contract_ids_str,total)
+        create_kit(consumer_id,farmer_id,contract_ids_str,total)
+        # if (created == True):
+        return HttpResponse('success')
+        # else:
+        #     return HttpResponse('failed')
 
-        sendrequesttofarmer(consumer_id,contract_ids)
-        # viewPage = loader.get_template('dashboard_index.html')
-        # content_view = 'orders'
-        # return HttpResponse(viewPage.render({'usr': checkuser(request), 'content_view': content_view}, request))
-        # return HttpResponse('success')
-
-        messages.info(request, 'success')
-        content_view = 'orders'
-        return render(request, 'dashboard_index.html' ,{'usr': checkuser(request),'content_view':content_view})
-
-def sendrequesttofarmer(consumer_id,contract_ids):
-    # first we have to update the contract_request table and add values to farmerid,consumer_id,contract_ids,
-    # request date, 
-    a = consumer_id
+def create_kit(consumer_id,farmer_id,contract_ids_str,total):
+    datetime = json.dumps(datetime_dict())
+    status = 'pending'
+    with connection.cursor() as c:
+        c.execute("INSERT INTO pfapp_contracts_kit (farmer_id,consumer_id,contract_ids,total_price,created_datetime,status) VALUES(%s,%s,%s,%s,%s,%s)", [farmer_id,consumer_id,contract_ids_str,total,datetime,status])
+        return True
+    return False
 
 
-# when 'Add to Cart' button clicked from contracts tab on farmer's profile page.
+
+def datetime_dict():
+    x = datetime.datetime.now()
+    x = str(x)
+    date = x[0:10]
+    time = x[11:16]
+    dic = {'date':date,'time':time}
+    return dic
+
+# view after cart button 'buynow' is clicked for consumer
 def orders(request):
     if checkuser(request):
         content_view = 'orders'
-        return render(request, 'dashboard_index.html' ,{'usr': checkuser(request),'content_view':content_view})
+        consumer = request.session['usr'].get('id')
+        # kits = contracts_kit.objects.filter(consumer=c)
+        with connection.cursor() as c:
+            c.execute("SELECT * FROM pfapp_contracts_kit JOIN pfapp_user_details ON pfapp_user_details.person_id = pfapp_contracts_kit.farmer_id WHERE pfapp_contracts_kit.consumer_id=%s",[consumer])
+            kits = dictfetchall(c)
+        print(kits)
+        for i in kits:
+            t = i.get('contract_ids')
+        return render(request, 'dashboard_index.html' ,{'usr': checkuser(request),'content_view':content_view,'kits':kits})
     else:
         messages.info(request, 'Login Now to view this page!!')
-        return redirect('/Settings/')
+        return redirect('/')
 
 # To view farmers near the registered location of the consumer
 def Explore(request):
@@ -204,7 +223,8 @@ def New_Request(request):
         viewPage = loader.get_template('dashboard_index.html')
         content_view = 'Contracts_Manager'
         content_view_sub = 'New_Request'
-        return HttpResponse(viewPage.render({'usr': checkuser(request), 'content_view': content_view,'content_view_sub': content_view_sub,}, request))
+        kit = contracts_kit.objects.filter(farmer=request.session['usr'],status='pending')
+        return HttpResponse(viewPage.render({'usr': checkuser(request), 'content_view': content_view,'content_view_sub': content_view_sub,'kit':kit}, request))
     else:
         messages.info(request, 'Login Now to view this page!')
         return redirect('/')

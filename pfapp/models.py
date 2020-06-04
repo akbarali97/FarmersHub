@@ -47,6 +47,11 @@ class reviews(models.Model):
     review = models.TextField(null=True)
     rating = models.FloatField(null=True)
 
-class contracts_request(models.Model):
+class contracts_kit(models.Model):
     farmer = models.ForeignKey('Person', on_delete=models.CASCADE)
     consumer = models.ForeignKey('Person', on_delete=models.CASCADE, related_name='consumer')
+    contract_ids = models.CharField(max_length=30)
+    total_price = models.CharField(max_length=12)
+    created_datetime = models.CharField(max_length=40)
+    contract_start_date = models.CharField(max_length=40,null=True)
+    status = models.CharField(max_length=12,default='pending')

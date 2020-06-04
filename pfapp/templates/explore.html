@@ -6,7 +6,7 @@
                 <!-- WHITE PANEL - TOP USER -->
                 <div class="white-panel pn">
                   <a href="/user/{{f.email}}/">
-                  <p><img src="/static/usrimg/{{f.id}}.png" class="img-circle" width="50"></p>
+                  <p><img src="/static/usrimg/{{f.id}}.png" class="img-responsive" style="width: 100px; height: 100px; object-fit: cover; margin: auto;border-radius: 50%;"></p>
                   <p><b>{{f.name}}</b></p>
                   <p>{{f.locality}}</p>
                   <div class="row">
@@ -15,15 +15,17 @@
                       <p>2012</p>
                     </div>
                     <div class="col-md-6">
-                      <p class="small mt">Currently Serving</p>
-                      <p>23<span>customers</span></p>
+                      <div class="small mt">Currently Serving</div>
+                      <div>23<span>customers</span></div>
+                    </div>
+                    <div class="col-md-6 d-flex justify-content-center">
+                      <span class="fa fa-star checked"></span>
+                      <span class="fa fa-star checked"></span>
+                      <span class="fa fa-star checked"></span>
+                      <span class="fa fa-star"></span>
+                      <span class="fa fa-star"></span>
                     </div>
                   </div>
-                                <span class="fa fa-star checked"></span>
-                                <span class="fa fa-star checked"></span>
-                                <span class="fa fa-star checked"></span>
-                                <span class="fa fa-star"></span>
-                                <span class="fa fa-star"></span>
                       </a>
                 </div>
               </div>
