@@ -3,7 +3,7 @@ from django.http import HttpResponseRedirect
 from django.template import loader
 from django.db import connection
 from django.contrib import messages
-from pfapp.models import Person, User_locations, user_details, products, contracts, contracts_kit
+from pfapp.models import Person, User_locations, user_details, products, contracts, contracts_kit, contract_orders
 from django.core.mail import EmailMessage
 from django.core.files.storage import FileSystemStorage
 from django.shortcuts import redirect, render
@@ -68,17 +68,16 @@ def checkout(request):
         consumer_id = data.get('consumerid')
         farmer_id = data.get('farmerid')
         contract_ids = data.get('listofids')
-        contract_ids_str = str(contract_ids)
-        total = 0
-        for i in contract_ids:
-            total = contracts.objects.values_list('price', flat=True).get(id=i) + total
-        total = str(total)
-        # created = create_kit(consumer_id,farmer_id,contract_ids_str,total)
-        create_kit(consumer_id,farmer_id,contract_ids_str,total)
-        # if (created == True):
+        # contract_ids_str = str(contract_ids)
+        # total = data.get('total')
+        orderstatus = 'pending'
+        datetime = json.dumps(datetime_dict())
+        for i in range(0,len(contract_ids)):
+            with connection.cursor() as c:
+                c.execute("INSERT INTO pfapp_contract_orders (seller_id,buyer_id,contract_id,order_datetime,order_status) VALUES(%s,%s,%s,%s,%s)", [farmer_id,consumer_id,contract_ids[i],datetime,orderstatus])
+        # create_kit(consumer_id,farmer_id,contract_ids_str,total)
         return HttpResponse('success')
-        # else:
-        #     return HttpResponse('failed')
+
 
 def create_kit(consumer_id,farmer_id,contract_ids_str,total):
     datetime = json.dumps(datetime_dict())
@@ -103,17 +102,42 @@ def orders(request):
     if checkuser(request):
         content_view = 'orders'
         consumer = request.session['usr'].get('id')
-        # kits = contracts_kit.objects.filter(consumer=c)
         with connection.cursor() as c:
-            c.execute("SELECT * FROM pfapp_contracts_kit JOIN pfapp_user_details ON pfapp_user_details.person_id = pfapp_contracts_kit.farmer_id WHERE pfapp_contracts_kit.consumer_id=%s",[consumer])
-            kits = dictfetchall(c)
-        print(kits)
-        for i in kits:
-            t = i.get('contract_ids')
-        return render(request, 'dashboard_index.html' ,{'usr': checkuser(request),'content_view':content_view,'kits':kits})
+            c.execute("SELECT * FROM pfapp_contract_orders JOIN pfapp_person ON pfapp_person.id=pfapp_contract_orders.seller_id JOIN pfapp_contracts ON pfapp_contracts.id=pfapp_contract_orders.contract_id JOIN pfapp_user_details ON pfapp_user_details.person_id=pfapp_person.id WHERE pfapp_contract_orders.buyer_id=%s ",[consumer])
+            k = dictfetchall(c)
+            # print(k)
+        return render(request, 'dashboard_index.html' ,{'usr': checkuser(request),'content_view':content_view,'orders':k})
     else:
         messages.info(request, 'Login Now to view this page!!')
         return redirect('/')
+
+def orderstatus(request,order_id,status):
+    if checkuser(request):
+        if (status == 'cancelled'):
+            if (request.session['usr'].get('type') == 'consumer'):    
+                c = contract_orders.objects.get(order_id=order_id)
+                c.order_status = status
+                c.save()
+                return redirect('/orders/')
+            else:
+                messages.info(request, "You Can't perform this operation")
+                return redirect('/')
+        elif status=='accepted' or status=='declined':
+            if (request.session['usr'].get('type') == 'farmer'):    
+                c = contract_orders.objects.get(order_id=order_id)
+                c.order_status = status
+                c.save()
+                return redirect('/Contracts_Manager/New_Request/')
+            else:
+                messages.info(request, "You Can't perform this operation")
+                return redirect('/')
+        else:
+            messages.info(request, "Unkown Request")
+            return redirect('/')
+    else:
+        messages.info(request, 'Login Now to view this page!!')
+        return redirect('/')
+
 
 # To view farmers near the registered location of the consumer
 def Explore(request):
@@ -220,13 +244,16 @@ def Customer_Reviews(request):
 
 def New_Request(request):
     if checkuser(request):
-        viewPage = loader.get_template('dashboard_index.html')
         content_view = 'Contracts_Manager'
         content_view_sub = 'New_Request'
-        kit = contracts_kit.objects.filter(farmer=request.session['usr'],status='pending')
-        return HttpResponse(viewPage.render({'usr': checkuser(request), 'content_view': content_view,'content_view_sub': content_view_sub,'kit':kit}, request))
+        farmer = request.session['usr'].get('id')
+        with connection.cursor() as c:
+            c.execute("SELECT * FROM pfapp_contract_orders JOIN pfapp_person ON pfapp_person.id=pfapp_contract_orders.buyer_id JOIN pfapp_contracts ON pfapp_contracts.id=pfapp_contract_orders.contract_id JOIN pfapp_user_details ON pfapp_user_details.person_id=pfapp_person.id WHERE pfapp_contract_orders.seller_id=%s AND pfapp_contract_orders.order_status='pending'",[farmer])
+            k = dictfetchall(c)
+            # print(k)
+        return render(request, 'dashboard_index.html' ,{'usr': checkuser(request),'content_view':content_view,'orders':k,'content_view_sub':content_view_sub})
     else:
-        messages.info(request, 'Login Now to view this page!')
+        messages.info(request, 'Login Now to view this page!!')
         return redirect('/')
 
 def Active_Contracts(request):
@@ -243,12 +270,16 @@ def Active_Contracts(request):
         messages.info(request, 'Login Now to view this page!')
         return redirect('/')
 
-def Expired_Contracts(request):
+def Active_Orders(request):
     if checkuser(request):
         viewPage = loader.get_template('dashboard_index.html')
+        farmer = request.session['usr'].get('id')
         content_view = 'Contracts_Manager'
-        content_view_sub = 'Expired_Contracts'
-        return HttpResponse(viewPage.render({'usr': checkuser(request), 'content_view': content_view,'content_view_sub': content_view_sub,}, request))
+        content_view_sub = 'Active_Orders'
+        with connection.cursor() as c:
+            c.execute("SELECT * FROM pfapp_contract_orders JOIN pfapp_person ON pfapp_person.id=pfapp_contract_orders.buyer_id JOIN pfapp_contracts ON pfapp_contracts.id=pfapp_contract_orders.contract_id JOIN pfapp_user_details ON pfapp_user_details.person_id=pfapp_person.id WHERE pfapp_contract_orders.seller_id=%s AND pfapp_contract_orders.order_status='accepted'",[farmer])
+            k = dictfetchall(c)
+        return HttpResponse(viewPage.render({'usr': checkuser(request), 'content_view': content_view,'content_view_sub': content_view_sub,'orders':k}, request))
     else:
         messages.info(request, 'Login Now to view this page!')
         return redirect('/')
@@ -274,14 +305,6 @@ def Add_Contracts(request):
             quantity_unit = request.POST['quantity_unit']
             price_unit = request.POST['price_unit']
             status = 'availabe'
-            # try:
-            # c=contracts.objects.create(product=product,quantity=qty,quantity_unit=qty_unit,duration=duration,duration_unit=duration_unit,frequency=frequency,frequency_unit=frequency_unit,price=price,price_unit=price_unit,Person=person)
-            # c.save()
-            # return redirect('/Contracts_Manager/Active_Contracts/')
-            # except Exception:
-            #     print('unable to create product')
-            #     return redirect('/Contracts_Manager/Add_Contracts/')
-            # try 2
             with connection.cursor() as c:
                 c.execute("INSERT INTO pfapp_contracts (Person_id,product_id,quantity,quantity_unit,duration,duration_unit,frequency,frequency_unit,price,price_unit,status) VALUES(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)", [person,product,quantity,quantity_unit,duration,duration_unit,frequency,frequency_unit,price,price_unit,status])
             messages.info(request, 'Contract successfully created')
@@ -310,7 +333,11 @@ def My_Contracts(request):
     if checkuser(request):
         viewPage = loader.get_template('dashboard_index.html')
         content_view = 'My_Contracts'
-        return HttpResponse(viewPage.render({'usr': checkuser(request), 'content_view': content_view}, request))
+        consumer = request.session['usr'].get('id')
+        with connection.cursor() as c:
+            c.execute("SELECT * FROM pfapp_contract_orders JOIN pfapp_person ON pfapp_person.id=pfapp_contract_orders.seller_id JOIN pfapp_contracts ON pfapp_contracts.id=pfapp_contract_orders.contract_id JOIN pfapp_user_details ON pfapp_user_details.person_id=pfapp_person.id WHERE pfapp_contract_orders.buyer_id=%s AND pfapp_contract_orders.order_status='accepted'",[consumer])
+            k = dictfetchall(c)
+        return HttpResponse(viewPage.render({'usr': checkuser(request), 'content_view': content_view,'orders':k}, request))
     else:
         messages.info(request, 'Login Now to view this page!')
         return redirect('/')

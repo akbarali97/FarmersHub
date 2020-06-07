@@ -25,7 +25,7 @@ function ready() {
 
 function purchaseClicked() {
     var cartItems = document.getElementsByClassName('cart_items')[0]
-    var cartItemids = cartItems.getElementsByClassName('proid')
+    var cartItemids = cartItems.getElementsByClassName('contrid')
     var listofids = []
     var consumerid = parseFloat(document.getElementsByClassName('as_bf')[0].innerText)
     var farmerid = parseFloat(document.getElementsByClassName('fm_cs')[0].innerText)
@@ -38,7 +38,9 @@ function purchaseClicked() {
         var proid = parseFloat(cartItemids[i].innerText)
         listofids[i]=proid
     }
-    var data = {'consumerid':consumerid,'farmerid':farmerid,'listofids':listofids}
+    var total = document.getElementById('totalpriceelement').innerText
+    console.log(total)
+    var data = {'consumerid':consumerid,'farmerid':farmerid,'listofids':listofids,'total':total}
     console.log(data)
     var data1 = JSON.stringify(data)
     console.log(data1)
@@ -60,24 +62,6 @@ function purchaseClicked() {
         });
     
 }
-
-// function getCookie(name) {
-//     var cookieValue = null;
-//     if (document.cookie && document.cookie !== '') {
-//         var cookies = document.cookie.split(';');
-//         for (var i = 0; i < cookies.length; i++) {
-//             var cookie = cookies[i].trim();
-//             // Does this cookie string begin with the name we want?
-//             if (cookie.substring(0, name.length + 1) === (name + '=')) {
-//                 cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-//                 break;
-//             }
-//         }
-//     }
-//     return cookieValue;
-// }
-
-
 
 function removeCartItem(event) {
     var buttonClicked = event.target
@@ -109,7 +93,7 @@ function addToCartClicked(event) {
     var shopItem = button.parentElement.parentElement
     var title = shopItem.getElementsByClassName('productname')[0].innerText
     var price = shopItem.getElementsByClassName('productprice')[0].innerText
-    var id = shopItem.getElementsByClassName('productid')[0].innerText
+    var id = shopItem.getElementsByClassName('contractid')[0].innerText
     // console.log(title,price,id)
     iscartempty()
     addItemToCart(title, price, id)
@@ -128,7 +112,7 @@ function addItemToCart(title, price,id) {
     }
     var cartRowContents = `
     <div class="row cart_row" style="padding: 5px;">
-        <div style="display: none;"><h5 class="proid" id='proid'>${id}</h5></div>
+        <div style="display: none;"><h5 class="contrid" id='contrid'>${id}</h5></div>
         <div class="col-sm-3"><h5 class="name">${title}</h5></div> 
         <div class="col-sm-6"><h5 class="price">${price}</h5></div>
         <div class="col-sm-3">

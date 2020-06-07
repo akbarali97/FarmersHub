@@ -50,13 +50,13 @@
           </li>
 
           <li class="sub-menu">
-            <a {% if content_view == 'Contracts_Manager' %} class="active" {% endif %} href="javascript:;">
+            <a {% if content_view == 'Contracts_Manager' %} class="active" {% endif %}>
               <span>Contracts Manager</span>
               </a>
             <ul class="sub">
               <li><a {% if content_view_sub == 'New_Request' %} class="active" {% endif %} href="/Contracts_Manager/New_Request/">New Request</a></li>
               <li><a {% if content_view_sub == 'Active_Contracts' %} class="active" {% endif %} href="/Contracts_Manager/Active_Contracts/">Active Contracts</a></li>
-              <li><a {% if content_view_sub == 'Expired_Contracts' %} class="active" {% endif %} href="/Contracts_Manager/Expired_Contracts/">Expired Contracts</a></li>
+              <li><a {% if content_view_sub == 'Active_Orders' %} class="active" {% endif %} href="/Contracts_Manager/Active_Orders/">Active_Orders</a></li>
               <li><a {% if content_view_sub == 'Add_Contracts' %} class="active" {% endif %} href="/Contracts_Manager/Add_Contracts/">Add Contracts</a></li>
             </ul>
           </li>
@@ -79,13 +79,13 @@
 <!--              <span>Chat Room</span>-->
 <!--              </a>-->
 <!--          </li>-->
-
+<!-- 
           <li class="sub-menu">
             <a {% if content_view == 'Learn_Farming' %} class="active" {% endif %} href="/Learn_Farming/">
               <span>Learn Farming</span>
               </a>
           </li>
-
+ -->
 
           <li class="sub-menu">
             <a {% if content_view == 'Settings' %} class="active" {% endif %} href="/Settings/">

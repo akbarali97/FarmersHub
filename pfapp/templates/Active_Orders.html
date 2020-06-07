@@ -10,13 +10,15 @@
               </div> -->
               <div style="background-color: rgba(0, 0, 0, 0.521);">
               <div class="servicetitle">
-                <strong><h4 style="color: rgb(255, 255, 255);">Seller: {{i.name}}</h4></strong>
+                <strong><h4 style="color: rgb(255, 255, 255);">Buyer: {{i.name}}</h4></strong>
               </div>
               <ul class="pricing">
                 <li><strong><h4 style="color: rgb(255, 255, 255);"><p>{{i.product_name}} for {{i.duration}}{{i.duration_unit}}</p><p> @ {{i.price}}{{i.price_unit}}</p><p> {{i.quantity}}{{i.quantity_unit}}/{{i.frequency}}{{i.frequency_unit}}</p></h4></strong></li>
               </ul>
               <p><strong><h4 style="color: rgb(255, 255, 255);">STATUS:{{i.order_status}}</h4></strong></p>
-             </div>
+              <!-- <a class="btn btn-success" type="button" id="cancelorder" href="/orderstatus/orderid={{i.order_id}}&status=accepted/">Accept</a>
+              <a class="btn btn-danger" type="button" id="cancelorder" href="/orderstatus/orderid={{i.order_id}}&status=declined/">Decline</a> -->
+            </div>
           </div>
             <!-- end custombox -->
           </div>

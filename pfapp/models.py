@@ -11,6 +11,7 @@ class Person(models.Model):
     pwd = models.CharField(max_length=30)
     type = models.CharField(max_length=30)
 
+
 class user_details(models.Model):
     name = models.CharField(max_length=30)
     gender = models.CharField(max_length=30)
@@ -30,6 +31,7 @@ class products(models.Model):
 
 class contracts(models.Model):
     product = models.ForeignKey('products', on_delete=models.CASCADE)
+    product_name = models.CharField(max_length=30,null=True)
     quantity = models.IntegerField()
     quantity_unit = models.CharField(max_length=15)
     duration = models.IntegerField()
@@ -51,7 +53,24 @@ class contracts_kit(models.Model):
     farmer = models.ForeignKey('Person', on_delete=models.CASCADE)
     consumer = models.ForeignKey('Person', on_delete=models.CASCADE, related_name='consumer')
     contract_ids = models.CharField(max_length=30)
-    total_price = models.CharField(max_length=12)
+    total_price = models.CharField(max_length=40)
     created_datetime = models.CharField(max_length=40)
     contract_start_date = models.CharField(max_length=40,null=True)
     status = models.CharField(max_length=12,default='pending')
+
+class contract_orders(models.Model):
+    order_id = models.AutoField(primary_key=True)
+    seller = models.ForeignKey('Person', on_delete=models.CASCADE)
+    buyer = models.ForeignKey('Person', on_delete=models.CASCADE, related_name='buyer')
+    contract = models.ForeignKey('contracts', on_delete=models.CASCADE)
+    order_datetime = models.CharField(max_length=40)
+    contract_start_date = models.CharField(max_length=40,null=True)
+    order_status = models.CharField(max_length=12)
+
+class c_o_payment(models.Model):
+    c_o_p_id = models.AutoField(primary_key=True)
+    c_o_id = models.ForeignKey('contract_orders', on_delete=models.CASCADE)
+    payer = models.ForeignKey('Person', on_delete=models.CASCADE)
+    payee = models.ForeignKey('Person', on_delete=models.CASCADE, related_name='payee')
+    amount = models.CharField(max_length=30)
+    payment_status = models.CharField(max_length=30)

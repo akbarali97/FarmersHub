@@ -1,33 +1,26 @@
-<div id="cart_items" class="cart_items">
-    <div class="cart_row_items">
-        <div class="row cart_row" style="padding: 5px;">
-            <div class="productid" style="display: none;" name="productid">3</div>
-            <div class="col-sm-3"><h5 class="name">onion</h5></div> 
-            <div class="col-sm-6"><h5 class="price">₹850/-&nbsp;Indian Rupees</h5></div>
-            <div class="col-sm-3">
-                <button type="button" class="btn btn-danger removebutton" style="float: right;" id="removebutton">Remove</button>
-            </div>
-        </div>
+SELECT pfapp_contract_orders.id AS order_id,pfapp_contract_orders.seller_id,pfapp_contract_orders.buyer_id,pfapp_contract_orders.contract_id,pfapp_contract_orders.order_datetime,pfapp_contract_orders.order_status,pfapp_contract_orders.contract_start_date
+FROM pfapp_contract_orders
+JOIN pfapp_person ON pfapp_person.id=pfapp_contract_orders.seller_id 
+JOIN pfapp_contracts ON pfapp_contracts.id=pfapp_contract_orders.contract_id 
+JOIN pfapp_user_details ON pfapp_user_details.person_id=pfapp_person.id 
+WHERE pfapp_contract_orders.buyer_id=%s
+
+<div class="col-lg-4 col-md-4 col-sm-4 mb">
+    <div class="product-panel-2 pn">
+      <div class="badge badge-hot">HOT</div>
+      <img src="img/product.jpg" width="200" alt="">
+      <h5 class="mt">Flat Pack Heritage</h5>
+      <h6>TOTAL SALES: 1388</h6>
+      <button class="btn btn-small btn-theme04">FULL REPORT</button>
     </div>
-    <div class="cart_row_items">
-        <div class="row cart_row" style="padding: 5px;">
-            <div class="productid" style="display: none;" name="productid">2</div>
-            <div class="col-sm-3"><h5 class="name">potato</h5></div> 
-            <div class="col-sm-6"><h5 class="price">₹250/-&nbsp;Indian Rupees</h5></div>
-            <div class="col-sm-3">
-                <button type="button" class="btn btn-danger removebutton" style="float: right;" id="removebutton">Remove</button>
-            </div>
-        </div>
-    </div>
-</div>
+  </div>
+
+  SELECT * FROM pfapp_contract_orders JOIN pfapp_person ON pfapp_person.id=pfapp_contract_orders.seller_id JOIN pfapp_contracts ON pfapp_contracts.id=pfapp_contract_orders.contract_id WHERE pfapp_contract_orders.buyer_id=%s"
 
 
-messages.info(request, 'Login Now to view this page!!!')
-        return redirect('/')
 
-        ?
-        cid=2&
-        list%5B%5D=2&
-        list%5B%5D=5
-
-        JSON.stringify()
+  [{'order_id': 1, 'order_datetime': '{"date": "2020-06-07", "time": "14:53"}', 'contract_start_date': None, 'order_status': 'pending', 'buyer_id': 2, 'contract_id': 3, 'seller_id': 3, 'id': 3, 'email': 'akbar@gmail.com', 'pwd': 'aaaaa', 'type': 'farmer', 'quantity': 3, 'quantity_unit': 'kilogram', 'duration': 3, 'duration_unit': 'Months', 'frequency': 1, 'frequency_unit': 'weekly', 'price': 250, 'price_unit': 'Indian Rupees', 'status': 'availabe', 'Person_id': 3, 'product_id': 2, 'product_name': 'potato', 'name': 'akbar', 'gender': 'male', 'phoneno': '9874000003', 'person_id': 3}, 
+  {'order_id': 2, 'order_datetime': '{"date": "2020-06-07", "time": "14:53"}', 'contract_start_date': None, 'order_status': 'pending', 'buyer_id': 2, 'contract_id': 4, 'seller_id': 3, 'id': 3, 'email': 'akbar@gmail.com', 'pwd': 'aaaaa', 'type': 'farmer', 'quantity': 3, 'quantity_unit': 'kilogram', 'duration': 6, 'duration_unit': 'Months', 'frequency': 1, 'frequency_unit': 'weekly', 'price': 260, 'price_unit': 'Indian Rupees', 'status': 'availabe', 'Person_id': 3, 'product_id': 1, 'product_name': 'tomato', 'name': 'akbar', 'gender': 'male', 'phoneno': '9874000003', 'person_id': 3}, 
+  {'order_id': 3, 'order_datetime': '{"date": "2020-06-07", "time": "14:53"}', 'contract_start_date': None, 'order_status': 'pending', 'buyer_id': 2, 'contract_id': 5, 'seller_id': 3, 'id': 3, 'email': 'akbar@gmail.com', 'pwd': 'aaaaa', 'type': 'farmer', 'quantity': 1, 'quantity_unit': 'pieces', 'duration': 3, 'duration_unit': 'Months', 'frequency': 1, 'frequency_unit': 'daily', 'price': 500, 'price_unit': 'Indian Rupees', 'status': 'availabe', 'Person_id': 3, 'product_id': 5, 'product_name': 'milk', 'name': 'akbar', 'gender': 'male', 'phoneno': '9874000003', 'person_id': 3}, 
+  {'order_id': 4, 'order_datetime': '{"date": "2020-06-07", "time": "14:53"}', 'contract_start_date': None, 'order_status': 'pending', 'buyer_id': 2, 'contract_id': 2, 'seller_id': 3, 'id': 3, 'email': 'akbar@gmail.com', 'pwd': 'aaaaa', 'type': 'farmer', 'quantity': 4, 'quantity_unit': 'kilogram', 'duration': 6, 'duration_unit': 'Months', 'frequency': 2, 'frequency_unit': 'monthly', 'price': 850, 'price_unit': 'Indian Rupees', 'status': 'availabe', 'Person_id': 3, 'product_id': 3, 'product_name': 'onion', 'name': 'akbar', 'gender': 'male', 'phoneno': '9874000003', 'person_id': 3}, 
+  {'order_id': 5, 'order_datetime': '{"date": "2020-06-07", "time": "14:53"}', 'contract_start_date': None, 'order_status': 'pending', 'buyer_id': 2, 'contract_id': 7, 'seller_id': 3, 'id': 3, 'email': 'akbar@gmail.com', 'pwd': 'aaaaa', 'type': 'farmer', 'quantity': 1, 'quantity_unit': 'kilogram', 'duration': 3, 'duration_unit': 'Months', 'frequency': 1, 'frequency_unit': 'weekly', 'price': 250, 'price_unit': 'Indian Rupees', 'status': 'availabe', 'Person_id': 3, 'product_id': 7, 'product_name': None, 'name': 'akbar', 'gender': 'male', 'phoneno': '9874000003', 'person_id': 3}]

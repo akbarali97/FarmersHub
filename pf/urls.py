@@ -35,13 +35,14 @@ urlpatterns = [
     path('My_Customers/',views.My_Customers),
     path('Contracts_Manager/New_Request/',views.New_Request),
     path('Contracts_Manager/Active_Contracts/',views.Active_Contracts),
-    path('Contracts_Manager/Expired_Contracts/',views.Expired_Contracts),
+    path('Contracts_Manager/Active_Orders/',views.Active_Orders),
     path('Contracts_Manager/Add_Contracts/',views.Add_Contracts),
     path('Customer_Reviews/',views.Customer_Reviews),
     path('Dispatch_Manager/',views.Dispatch_Manager),
     path('user/<email>/',views.view_profile),
     path('checkout/', views.checkout),
     path('orders/', views.orders),
+    path('orderstatus/orderid=<order_id>&status=<status>/', views.orderstatus),
 
 ]
 
