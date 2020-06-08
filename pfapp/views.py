@@ -3,7 +3,7 @@ from django.http import HttpResponseRedirect
 from django.template import loader
 from django.db import connection
 from django.contrib import messages
-from pfapp.models import Person, User_locations, user_details, products, contracts, contracts_kit, contract_orders
+from pfapp.models import Person, User_locations, user_details, products, contracts, contract_orders, reviews
 from django.core.mail import EmailMessage
 from django.core.files.storage import FileSystemStorage
 from django.shortcuts import redirect, render
@@ -49,14 +49,18 @@ def view_profile(request,email):
         user_exist = 0
         content_view = 'Explore_Farmers'
         with connection.cursor() as c:
-            c.execute("SELECT * FROM pfapp_person JOIN pfapp_user_locations ON pfapp_user_locations.person_id = pfapp_person.id JOIN pfapp_user_details ON pfapp_user_details.person_id = pfapp_person.id WHERE pfapp_person.email=%s LIMIT 1", [email])
+            c.execute("""SELECT * FROM pfapp_person 
+            JOIN pfapp_user_locations ON pfapp_user_locations.person_id = pfapp_person.id 
+            JOIN pfapp_user_details ON pfapp_user_details.person_id = pfapp_person.id 
+            WHERE pfapp_person.email=%s LIMIT 1""", [email])
             c.cursor.row_factory = rfact
             q_usr = c.fetchone()
         user_exist = 1
         p = Person.objects.get(email=email)
         p = p.id
         c = contracts.objects.filter(Person__id=p)
-        return render(request, 'dashboard_index.html', {'usr': checkuser(request), 'content_view': content_view,'qusr':q_usr,'user_exist':user_exist,'c':c})
+        review_ratings = reviews.objects.filter(reviewee_id=p)
+        return render(request, 'dashboard_index.html', {'usr': checkuser(request), 'content_view': content_view,'qusr':q_usr,'user_exist':user_exist,'c':c,'review_ratings':review_ratings})
     else:
         messages.info(request, 'Login Now to view this page!!!')
         return redirect('/')
@@ -74,20 +78,11 @@ def checkout(request):
         datetime = json.dumps(datetime_dict())
         for i in range(0,len(contract_ids)):
             with connection.cursor() as c:
-                c.execute("INSERT INTO pfapp_contract_orders (seller_id,buyer_id,contract_id,order_datetime,order_status) VALUES(%s,%s,%s,%s,%s)", [farmer_id,consumer_id,contract_ids[i],datetime,orderstatus])
+                c.execute("""INSERT INTO pfapp_contract_orders 
+                (seller_id,buyer_id,contract_id,order_datetime,order_status) 
+                VALUES(%s,%s,%s,%s,%s)""", [farmer_id,consumer_id,contract_ids[i],datetime,orderstatus])
         # create_kit(consumer_id,farmer_id,contract_ids_str,total)
         return HttpResponse('success')
-
-
-def create_kit(consumer_id,farmer_id,contract_ids_str,total):
-    datetime = json.dumps(datetime_dict())
-    status = 'pending'
-    with connection.cursor() as c:
-        c.execute("INSERT INTO pfapp_contracts_kit (farmer_id,consumer_id,contract_ids,total_price,created_datetime,status) VALUES(%s,%s,%s,%s,%s,%s)", [farmer_id,consumer_id,contract_ids_str,total,datetime,status])
-        return True
-    return False
-
-
 
 def datetime_dict():
     x = datetime.datetime.now()
@@ -242,6 +237,29 @@ def Customer_Reviews(request):
         messages.info(request, 'Login Now to view this page!')
         return redirect('/')
 
+def addreview(request):
+    if checkuser(request):
+        if 'reviewbtn' in request.POST:
+            reviewer = request.session['usr'].get('id')
+            reviewee = request.POST['reviewee']
+            review = request.POST['reviewtext']
+            rating = request.POST['star']
+            # print(reviewer,reviewee,review,rating,sep='\n')
+            with connection.cursor() as c:
+                c.execute(""" INSERT INTO pfapp_reviews
+                            (reviewer_id,reviewee_id,review,rating)
+                             VALUES(%s,%s,%s,%s) """,[reviewer,reviewee,review,rating])
+            # reviews.objects.create(reviewee=reviewee,reviewer=reviewer,review=review,rating=rating)
+            r = reviews.objects.filter(reviewee=reviewee).count()
+            print(r)
+            email = Person.objects.get(id=reviewee).email
+            return redirect(f'/user/{email}/')
+    else:
+        messages.info(request, 'Login Now to view this page!!')
+        return redirect('/')
+
+
+
 def New_Request(request):
     if checkuser(request):
         content_view = 'Contracts_Manager'
@@ -250,7 +268,6 @@ def New_Request(request):
         with connection.cursor() as c:
             c.execute("SELECT * FROM pfapp_contract_orders JOIN pfapp_person ON pfapp_person.id=pfapp_contract_orders.buyer_id JOIN pfapp_contracts ON pfapp_contracts.id=pfapp_contract_orders.contract_id JOIN pfapp_user_details ON pfapp_user_details.person_id=pfapp_person.id WHERE pfapp_contract_orders.seller_id=%s AND pfapp_contract_orders.order_status='pending'",[farmer])
             k = dictfetchall(c)
-            # print(k)
         return render(request, 'dashboard_index.html' ,{'usr': checkuser(request),'content_view':content_view,'orders':k,'content_view_sub':content_view_sub})
     else:
         messages.info(request, 'Login Now to view this page!!')
@@ -264,7 +281,6 @@ def Active_Contracts(request):
         person = request.session['usr']
         person = person.get('id')
         c = contracts.objects.filter(Person__id=person)
-        print (c)
         return HttpResponse(viewPage.render({'usr': checkuser(request), 'content_view': content_view,'content_view_sub': content_view_sub,'c':c}, request))
     else:
         messages.info(request, 'Login Now to view this page!')
@@ -286,10 +302,6 @@ def Active_Orders(request):
 
 def Add_Contracts(request):
     if checkuser(request):
-        # viewPage = loader.get_template('dashboard_index.html')
-        # content_view = 'Contracts_Manager'
-        # content_view_sub = 'Add_Contracts'
-        # p = products.objects.all()
         if 'create' in request.POST:
             person = request.session['usr']
             person = person.get('id')
@@ -314,7 +326,6 @@ def Add_Contracts(request):
             content_view_sub = 'Add_Contracts'
             p = products.objects.all()
             return render(request, 'dashboard_index.html', {'usr': checkuser(request), 'content_view': content_view,'content_view_sub': content_view_sub,'p':p})
-            # return HttpResponse(viewPage.render({'usr': checkuser(request), 'content_view': content_view,'content_view_sub': content_view_sub,'p':p}, request))
     else:
         messages.info(request, 'Login Now to view this page!')
         return redirect('/')
@@ -335,7 +346,11 @@ def My_Contracts(request):
         content_view = 'My_Contracts'
         consumer = request.session['usr'].get('id')
         with connection.cursor() as c:
-            c.execute("SELECT * FROM pfapp_contract_orders JOIN pfapp_person ON pfapp_person.id=pfapp_contract_orders.seller_id JOIN pfapp_contracts ON pfapp_contracts.id=pfapp_contract_orders.contract_id JOIN pfapp_user_details ON pfapp_user_details.person_id=pfapp_person.id WHERE pfapp_contract_orders.buyer_id=%s AND pfapp_contract_orders.order_status='accepted'",[consumer])
+            c.execute("""SELECT * FROM pfapp_contract_orders 
+            JOIN pfapp_person ON pfapp_person.id=pfapp_contract_orders.seller_id 
+            JOIN pfapp_contracts ON pfapp_contracts.id=pfapp_contract_orders.contract_id 
+            JOIN pfapp_user_details ON pfapp_user_details.person_id=pfapp_person.id 
+            WHERE pfapp_contract_orders.buyer_id=%s AND pfapp_contract_orders.order_status='accepted'""",[consumer])
             k = dictfetchall(c)
         return HttpResponse(viewPage.render({'usr': checkuser(request), 'content_view': content_view,'orders':k}, request))
     else:

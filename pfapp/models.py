@@ -44,19 +44,17 @@ class contracts(models.Model):
     status = models.CharField(max_length=10,default='available')
 
 class reviews(models.Model):
+    review_id = models.AutoField(primary_key=True)
     reviewee = models.ForeignKey('Person', on_delete=models.CASCADE)
     reviewer = models.ForeignKey('Person', on_delete=models.CASCADE, related_name='reviewee')
     review = models.TextField(null=True)
     rating = models.FloatField(null=True)
 
-class contracts_kit(models.Model):
-    farmer = models.ForeignKey('Person', on_delete=models.CASCADE)
-    consumer = models.ForeignKey('Person', on_delete=models.CASCADE, related_name='consumer')
-    contract_ids = models.CharField(max_length=30)
-    total_price = models.CharField(max_length=40)
-    created_datetime = models.CharField(max_length=40)
-    contract_start_date = models.CharField(max_length=40,null=True)
-    status = models.CharField(max_length=12,default='pending')
+class overall_rating(models.Model):
+    overall_rating_id = models.AutoField(primary_key=True)
+    ratee = models.ForeignKey('Person', on_delete=models.CASCADE)
+    overall_rating = models.FloatField(null=True)
+
 
 class contract_orders(models.Model):
     order_id = models.AutoField(primary_key=True)

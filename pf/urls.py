@@ -42,6 +42,7 @@ urlpatterns = [
     path('user/<email>/',views.view_profile),
     path('checkout/', views.checkout),
     path('orders/', views.orders),
+    path('addreview/', views.addreview),
     path('orderstatus/orderid=<order_id>&status=<status>/', views.orderstatus),
 
 ]

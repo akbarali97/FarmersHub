@@ -84,7 +84,7 @@
                 <div class="activity-panel">
                     <div class="row">
                       <div class="col-sm-3" ></div>
-                      <div class="col-sm-6"><h5 >Make a Kit</h5></div>
+                      <div class="col-sm-6"><h5 >Add to Cart</h5></div>
                       <div class="col-sm-3">
                         <!-- <form method="POST" id="csrf_var"> -->
                           <button class="btn btn-success" type="button" id="btn-purchase" style="float: right;">Buy Now</button>{% csrf_token %}
@@ -140,14 +140,17 @@
                   <div class="col-lg-8 col-lg-offset-2 detailed">
 
                     <!-- for viewing reviews -->
-                    <div class="row" style="border-radius: 25px;border: blue;">
-                      <div><span style="float: left;">reviewer photo here </span><span style="float: right;">review text here</span></div>
-                      <hr>
+                    {% for i in review_ratings %}
+                    <div class="row" style="border-radius: 25px;border: 1px solid #286090;padding: 1.5%; margin: 0.5%;">
+                      <div ><span style="float: left;"><img class=" img-responsive img-circle" src="/static/usrimg/{{i.reviewer_id}}.png" style="width: 25px; height: 25px;margin: auto;"></span><span style="float: right; border: 1px black;">{{i.review}}</span></div>
                     </div>
+                    {% endfor %}
+
                     <!-- /for viewing reviews -->
-                    
+                    <hr>
                   <!-- for inserting review -->
-                  <form method="POST">{% csrf_token %}
+                  <form action="/addreview/" method="POST">{% csrf_token %}
+                    <input type="hidden" name="reviewee" value="{{qusr.id}}">
                   <textarea name='reviewtext' rows="3" class="form-control" placeholder="write a review about the farmer."></textarea>
                   <div class="grey-style">
                     <div class="pull-left">
@@ -168,7 +171,7 @@
                       </div>
                     </div>
                     <div class="pull-right">
-                      <button type='submit' class="btn btn-sm btn-theme03">POST</button>
+                      <button type='submit' class="btn btn-sm btn-theme03" name="reviewbtn">POST</button>
                     </div>
                   </div>
                 </form>
