@@ -38,18 +38,18 @@
           </li>
 
           <li class="sub-menu">
-            <a {% if content_view == 'My_Earnings' %} class="active" {% endif %} href="/My_Earnings/">
-              <span>My Earnings</span>
+            <a {% if content_view_sub == 'New_Request' %} class="active" {% endif %} href="/Contracts_Manager/New_Request/">
+              <span>New_Request</span>
               </a>
           </li>
           
-          <li class="sub-menu">
+          <!-- <li class="sub-menu">
             <a {% if content_view == 'My_Customers' %} class="active" {% endif %} href="/My_Customers/">
               <span>My Customers</span>
               </a>
-          </li>
+          </li> -->
 
-          <li class="sub-menu">
+          <!-- <li class="sub-menu">
             <a {% if content_view == 'Contracts_Manager' %} class="active" {% endif %}>
               <span>Contracts Manager</span>
               </a>
@@ -59,11 +59,23 @@
               <li><a {% if content_view_sub == 'Active_Orders' %} class="active" {% endif %} href="/Contracts_Manager/Active_Orders/">Active_Orders</a></li>
               <li><a {% if content_view_sub == 'Add_Contracts' %} class="active" {% endif %} href="/Contracts_Manager/Add_Contracts/">Add Contracts</a></li>
             </ul>
+          </li> -->
+
+          <li class="sub-menu">
+            <a {% if content_view_sub == 'Active_Orders' %} class="active" {% endif %} href="/Contracts_Manager/Active_Orders/">
+              <span>Active Orders</span>
+              </a>
           </li>
 
           <li class="sub-menu">
-            <a {% if content_view == 'Customer_Reviews' %} class="active" {% endif %} href="/Customer_Reviews/">
-              <span>Customer Reviews</span>
+            <a {% if content_view_sub == 'Active_Contracts' %} class="active" {% endif %} href="/Contracts_Manager/Active_Contracts/">
+              <span>Active Contracts</span>
+              </a>
+          </li>
+
+          <li class="sub-menu">
+            <a {% if content_view_sub == 'Add_Contracts' %} class="active" {% endif %} href="/Contracts_Manager/Add_Contracts/">
+              <span>Add_Contracts</span>
               </a>
           </li>
 
@@ -73,19 +85,12 @@
               </a>
           </li>
 
-<!--          <li class="sub-menu">-->
-<!--            <a href="javascript:;">-->
-<!--              <i class="fa fa-comments-o"></i>-->
-<!--              <span>Chat Room</span>-->
-<!--              </a>-->
-<!--          </li>-->
-<!-- 
-          <li class="sub-menu">
+          <!-- <li class="sub-menu">
             <a {% if content_view == 'Learn_Farming' %} class="active" {% endif %} href="/Learn_Farming/">
               <span>Learn Farming</span>
               </a>
-          </li>
- -->
+          </li> -->
+
 
           <li class="sub-menu">
             <a {% if content_view == 'Settings' %} class="active" {% endif %} href="/Settings/">

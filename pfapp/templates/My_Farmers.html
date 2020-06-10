@@ -1,30 +1,60 @@
 <section id="main-content">
-      <section class="wrapper">
+      <section class="wrapper site-min-height">
+        <br><p></p>
               {%for f in farmers %}
           <a href="/profile/{{f.uid.name}}">
               <div class="col-lg-4 col-md-4 col-sm-4 mb">
                 <!-- WHITE PANEL - TOP USER -->
                 <div class="white-panel pn">
-                  <div class="white-header">
-                    <h5>TOP USER</h5>
-                  </div>
-                  <p><img src="/static/usrimg/{{f.u_id.id}}.png" class="img-circle" width="50"></p>
-                  <p><b>{{f.u_id.name}}</b></p>
+                  <a href="/user/{{f.email}}/">
+                  <br><img src="/static/usrimg/{{f.id}}.png" class="img-responsive" style="width: 100px; height: 100px; object-fit: cover; margin: auto;border-radius: 50%;">
+                  <br><b>{{f.name}}</b>
                   <div class="row">
                     <div class="col-md-6">
                       <p class="small mt">MEMBER SINCE</p>
                       <p>2012</p>
                     </div>
                     <div class="col-md-6">
-                      <p class="small mt">TOTAL SPEND</p>
-                      <p>$ 47,60</p>
+                      <p class="small mt">HAPPY CUSTOMERS</p>
+                      <p>13</p>
                     </div>
                   </div>
-                                <span class="fa fa-star checked"></span>
-                                <span class="fa fa-star checked"></span>
-                                <span class="fa fa-star checked"></span>
-                                <span class="fa fa-star"></span>
-                                <span class="fa fa-star"></span>
+                  <div class="display-star-rating">
+                    {% if f.overall_rating_value == 1.0 %}
+                    <span class="fa fa-star checked"></span>
+                    <span class="fa fa-star "></span>
+                    <span class="fa fa-star "></span>
+                    <span class="fa fa-star "></span>
+                    <span class="fa fa-star "></span>
+                    {% elif f.overall_rating_value == 2.0 %}
+                    <span class="fa fa-star checked"></span>
+                    <span class="fa fa-star checked"></span>
+                    <span class="fa fa-star "></span>
+                    <span class="fa fa-star "></span>
+                    <span class="fa fa-star "></span>
+                    {% elif f.overall_rating_value == 3.0 %}
+                    <span class="fa fa-star checked"></span>
+                    <span class="fa fa-star checked"></span>
+                    <span class="fa fa-star checked"></span>
+                    <span class="fa fa-star "></span>
+                    <span class="fa fa-star "></span>
+                    {% elif f.overall_rating_value == 4.0 %}
+                    <span class="fa fa-star checked"></span>
+                    <span class="fa fa-star checked"></span>
+                    <span class="fa fa-star checked"></span>
+                    <span class="fa fa-star checked"></span>
+                    <span class="fa fa-star "></span>
+                    {% elif f.overall_rating_value == 5.0 %}
+                    <span class="fa fa-star checked"></span>
+                    <span class="fa fa-star checked"></span>
+                    <span class="fa fa-star checked"></span>
+                    <span class="fa fa-star checked"></span>
+                    <span class="fa fa-star checked"></span>
+                    {% else %}
+                    <span>users have not rated yet!</span>
+                    {% endif %}
+                  </div>
+                </a>
                 </div>
               </div>
           </a>

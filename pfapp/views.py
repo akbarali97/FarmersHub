@@ -3,7 +3,7 @@ from django.http import HttpResponseRedirect
 from django.template import loader
 from django.db import connection
 from django.contrib import messages
-from pfapp.models import Person, User_locations, user_details, products, contracts, contract_orders, reviews
+from pfapp.models import Person, User_locations, user_details, products, contracts, contract_orders, reviews, overall_rating
 from django.core.mail import EmailMessage
 from django.core.files.storage import FileSystemStorage
 from django.shortcuts import redirect, render
@@ -40,7 +40,7 @@ def index(request):
             else:
                 return redirect('Profile/')
         else:
-            # create_kit(2,3,'[5,4,3,2]','1860')
+            overall_rating_calculator(3)
             return render(request, 'index.html', {'usr': checkuser(request), 'signup_page': signup_page})
         
 # to view the farmers profile page
@@ -56,10 +56,11 @@ def view_profile(request,email):
             c.cursor.row_factory = rfact
             q_usr = c.fetchone()
         user_exist = 1
-        p = Person.objects.get(email=email)
-        p = p.id
+        p = Person.objects.get(email=email).id
         c = contracts.objects.filter(Person__id=p)
-        review_ratings = reviews.objects.filter(reviewee_id=p)
+        with connection.cursor() as w:
+            w.execute("SELECT * FROM pfapp_reviews JOIN pfapp_user_details ON  pfapp_user_details.person_id=pfapp_reviews.reviewer_id WHERE pfapp_reviews.reviewee_id=%s",[p])
+            review_ratings = dictfetchall(w)
         return render(request, 'dashboard_index.html', {'usr': checkuser(request), 'content_view': content_view,'qusr':q_usr,'user_exist':user_exist,'c':c,'review_ratings':review_ratings})
     else:
         messages.info(request, 'Login Now to view this page!!!')
@@ -205,7 +206,19 @@ def My_Farmers(request):
     if checkuser(request):
         viewPage = loader.get_template('dashboard_index.html')
         content_view = 'My_Farmers'
-        return HttpResponse(viewPage.render({'usr': checkuser(request), 'content_view': content_view}, request))
+        farmers_list = list(contract_orders.objects.filter(buyer_id=request.session['usr'].get('id')).values_list('seller_id',flat=True).distinct())
+        print(farmers_list)
+        farmers_list_det = []
+        for i in farmers_list:
+            with connection.cursor() as c:
+                c.execute("""SELECT * FROM pfapp_person 
+                JOIN pfapp_overall_rating ON pfapp_overall_rating.ratee_id = pfapp_person.id 
+                JOIN pfapp_user_details ON pfapp_user_details.person_id = pfapp_person.id 
+                WHERE pfapp_person.id=%s """,[i])
+                [farmer] = dictfetchall(c)
+            farmers_list_det.append(farmer)
+        print(farmers_list_det)
+        return HttpResponse(viewPage.render({'usr': checkuser(request), 'content_view': content_view,'farmers':farmers_list_det}, request))
     else:
         messages.info(request, 'Login Now to view this page!')
         return redirect('/')
@@ -244,20 +257,31 @@ def addreview(request):
             reviewee = request.POST['reviewee']
             review = request.POST['reviewtext']
             rating = request.POST['star']
-            # print(reviewer,reviewee,review,rating,sep='\n')
             with connection.cursor() as c:
                 c.execute(""" INSERT INTO pfapp_reviews
                             (reviewer_id,reviewee_id,review,rating)
                              VALUES(%s,%s,%s,%s) """,[reviewer,reviewee,review,rating])
-            # reviews.objects.create(reviewee=reviewee,reviewer=reviewer,review=review,rating=rating)
-            r = reviews.objects.filter(reviewee=reviewee).count()
-            print(r)
+            overall_rating_calculator(reviewee)
             email = Person.objects.get(id=reviewee).email
             return redirect(f'/user/{email}/')
     else:
         messages.info(request, 'Login Now to view this page!!')
         return redirect('/')
 
+def overall_rating_calculator(reviewee):
+    ree = reviewee
+    rating_list = list(reviews.objects.filter(reviewee_id=ree).values_list('rating',flat=True))
+    t = 0
+    for i in rating_list:
+        t = t + i
+    r = t / len(rating_list)
+    r = round(r,0)
+    try:
+        o = overall_rating.objects.get(ratee_id=ree)
+        o.overall_rating_value = r
+        o.save()
+    except Exception:
+        o = overall_rating.objects.create(ratee_id=ree,overall_rating_value=r)
 
 
 def New_Request(request):
@@ -280,11 +304,28 @@ def Active_Contracts(request):
         content_view_sub = 'Active_Contracts'
         person = request.session['usr']
         person = person.get('id')
-        c = contracts.objects.filter(Person__id=person)
+        c = contracts.objects.filter(Person__id=person,status='available')
         return HttpResponse(viewPage.render({'usr': checkuser(request), 'content_view': content_view,'content_view_sub': content_view_sub,'c':c}, request))
     else:
         messages.info(request, 'Login Now to view this page!')
         return redirect('/')
+
+def deactivate_contract(request,contract_id):
+    if checkuser(request):
+        clist = list(contracts.objects.filter(Person_id=request.session['usr'].get('id'),status='available').values_list('id', flat=True))
+        if int(contract_id,10) in clist:
+            r = contracts.objects.get(id=contract_id)
+            r.status = 'deactivated'
+            r.save()
+            return redirect('/Contracts_Manager/Active_Contracts/')
+        else:
+            messages.info(request, 'You cannot perform this operation! Contact Administrator.')
+            return redirect('/Contracts_Manager/Active_Contracts/')
+    else:
+        messages.info(request, 'Login Now to view this page!')
+        return redirect('/')
+
+
 
 def Active_Orders(request):
     if checkuser(request):
@@ -316,7 +357,7 @@ def Add_Contracts(request):
             frequency_unit = request.POST['frequency_unit']
             quantity_unit = request.POST['quantity_unit']
             price_unit = request.POST['price_unit']
-            status = 'availabe'
+            status = 'available'
             with connection.cursor() as c:
                 c.execute("INSERT INTO pfapp_contracts (Person_id,product_id,quantity,quantity_unit,duration,duration_unit,frequency,frequency_unit,price,price_unit,status) VALUES(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)", [person,product,quantity,quantity_unit,duration,duration_unit,frequency,frequency_unit,price,price_unit,status])
             messages.info(request, 'Contract successfully created')
@@ -334,7 +375,13 @@ def Profile(request):
     if checkuser(request):
         viewPage = loader.get_template('dashboard_index.html')
         content_view = 'Profile'
-        return HttpResponse(viewPage.render({'usr': checkuser(request), 'content_view': content_view}, request))
+        # review_ratings = reviews.objects.filter(reviewee_id=request.session['usr'].get('id'))
+        with connection.cursor() as c:
+            c.execute("SELECT * FROM pfapp_reviews JOIN pfapp_user_details ON  pfapp_user_details.person_id=pfapp_reviews.reviewer_id WHERE pfapp_reviews.reviewee_id=%s",[request.session['usr'].get('id')])
+            review_ratings = dictfetchall(c)
+        p = request.session['usr'].get('id')
+        c = contracts.objects.filter(Person__id=p)
+        return HttpResponse(viewPage.render({'usr': checkuser(request), 'content_view': content_view,'c':c,'review_ratings':review_ratings,}, request))
     else:
         messages.info(request, 'Login Now to view this page!')
         return redirect('/')

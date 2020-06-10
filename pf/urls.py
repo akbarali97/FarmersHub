@@ -44,6 +44,7 @@ urlpatterns = [
     path('orders/', views.orders),
     path('addreview/', views.addreview),
     path('orderstatus/orderid=<order_id>&status=<status>/', views.orderstatus),
+    path('Contracts_Manager/Active_Contracts/deactivate/<contract_id>/',views.deactivate_contract),
 
 ]
 

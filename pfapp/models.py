@@ -53,7 +53,7 @@ class reviews(models.Model):
 class overall_rating(models.Model):
     overall_rating_id = models.AutoField(primary_key=True)
     ratee = models.ForeignKey('Person', on_delete=models.CASCADE)
-    overall_rating = models.FloatField(null=True)
+    overall_rating_value = models.FloatField(null=True)
 
 
 class contract_orders(models.Model):

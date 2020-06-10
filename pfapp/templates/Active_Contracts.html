@@ -18,7 +18,7 @@
                 <li>{{i.quantity}}&nbsp{{i.quantity_unit}}</li>
                 <li>₹{{i.price}}/-&nbsp{{i.price_unit}}</li>
               </ul>
-              <button type="button" name='Deactivate' class="btn btn-danger" href='/'>Deactivate</button>
+              <button class="btn btn-danger" type="button" onclick ="location.href='/Contracts_Manager/Active_Contracts/deactivate/{{i.id}}/'" >Deactivate</button>
             </div>
             <!-- end custombox -->
           </div>

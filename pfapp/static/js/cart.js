@@ -21,7 +21,39 @@ function ready() {
     }
 
     document.getElementById('btn-purchase').addEventListener('click', purchaseClicked)
+
+    // document.getElementById('reviewbtn').addEventListener('click', addreview)
 }
+
+// function addreview () {
+//     var reviewee = $("[name='reviewee']").val();
+//     var reviewtext = $("[name='reviewtext']").val();
+//     var rating = $("input[name='star']:checked").val();
+//     var el = document.getElementsByName("csrfmiddlewaretoken")
+//     var csrf_value = el[0].getAttribute("value")
+//     console.log(reviewee)
+//     console.log(reviewtext)
+//     console.log(rating)
+//     data = {'reviewee':reviewee,'reviewtext':reviewtext,'rating':rating}
+//     $.ajax(
+//         {
+//             url: '/addreview/',
+//             type: 'POST',
+//             data: {'data':data},
+//             headers:{"X-CSRFToken": csrf_value },
+//             success:function(response){
+//                 alert('Your review is submitted.\n ');
+//                 location.reload();
+//             },
+//             error:function(){
+//                 alert('Please try again later.\n ');
+//                 location.reload();
+//             },
+            
+//         });
+
+// }
+
 
 function purchaseClicked() {
     var cartItems = document.getElementsByClassName('cart_items')[0]
